@@ -1,0 +1,3 @@
+[submodule "lib/protos"]
+	path = lib/protos
+	url = git@github.com:SergeyZvyagin/monopoly-protos.git
