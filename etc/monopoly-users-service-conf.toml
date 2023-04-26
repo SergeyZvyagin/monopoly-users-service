@@ -1,0 +1,9 @@
+[GRPc]
+maxWorkers = 2
+port = 1628
+
+[AuthFromVK]
+getAccessTokenBaseURL = "https://oauth.vk.com/access_token"
+clientID = "51617193"
+clientSecret = ""
+redirectURI = "http://127.0.0.1:6543/verifyVK"
