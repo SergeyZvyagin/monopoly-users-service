@@ -15,27 +15,27 @@ class UsersServiceStub(object):
             channel: A grpc.Channel.
         """
         self.AuthAsGuest = channel.unary_unary(
-                '/UsersService/AuthAsGuest',
+                '/UsersMicroservice.UsersService/AuthAsGuest',
                 request_serializer=UsersMicroservice__pb2.AuthRequest.SerializeToString,
                 response_deserializer=UsersMicroservice__pb2.AuthResponse.FromString,
                 )
         self.AuthFromVK = channel.unary_unary(
-                '/UsersService/AuthFromVK',
+                '/UsersMicroservice.UsersService/AuthFromVK',
                 request_serializer=UsersMicroservice__pb2.AuthRequest.SerializeToString,
                 response_deserializer=UsersMicroservice__pb2.AuthResponse.FromString,
                 )
         self.ChangeNickname = channel.unary_unary(
-                '/UsersService/ChangeNickname',
+                '/UsersMicroservice.UsersService/ChangeNickname',
                 request_serializer=UsersMicroservice__pb2.ChangeNicknameRequest.SerializeToString,
                 response_deserializer=UsersMicroservice__pb2.ChangeNicknameResponse.FromString,
                 )
         self.RefreshAccessToken = channel.unary_unary(
-                '/UsersService/RefreshAccessToken',
+                '/UsersMicroservice.UsersService/RefreshAccessToken',
                 request_serializer=UsersMicroservice__pb2.RefreshAccessTokenRequest.SerializeToString,
                 response_deserializer=UsersMicroservice__pb2.RefreshAccessTokenResponse.FromString,
                 )
         self.GetInfo = channel.unary_unary(
-                '/UsersService/GetInfo',
+                '/UsersMicroservice.UsersService/GetInfo',
                 request_serializer=UsersMicroservice__pb2.GetInfoRequest.SerializeToString,
                 response_deserializer=UsersMicroservice__pb2.GetInfoResponse.FromString,
                 )
@@ -104,7 +104,7 @@ def add_UsersServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'UsersService', rpc_method_handlers)
+            'UsersMicroservice.UsersService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -123,7 +123,7 @@ class UsersService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UsersService/AuthAsGuest',
+        return grpc.experimental.unary_unary(request, target, '/UsersMicroservice.UsersService/AuthAsGuest',
             UsersMicroservice__pb2.AuthRequest.SerializeToString,
             UsersMicroservice__pb2.AuthResponse.FromString,
             options, channel_credentials,
@@ -140,7 +140,7 @@ class UsersService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UsersService/AuthFromVK',
+        return grpc.experimental.unary_unary(request, target, '/UsersMicroservice.UsersService/AuthFromVK',
             UsersMicroservice__pb2.AuthRequest.SerializeToString,
             UsersMicroservice__pb2.AuthResponse.FromString,
             options, channel_credentials,
@@ -157,7 +157,7 @@ class UsersService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UsersService/ChangeNickname',
+        return grpc.experimental.unary_unary(request, target, '/UsersMicroservice.UsersService/ChangeNickname',
             UsersMicroservice__pb2.ChangeNicknameRequest.SerializeToString,
             UsersMicroservice__pb2.ChangeNicknameResponse.FromString,
             options, channel_credentials,
@@ -174,7 +174,7 @@ class UsersService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UsersService/RefreshAccessToken',
+        return grpc.experimental.unary_unary(request, target, '/UsersMicroservice.UsersService/RefreshAccessToken',
             UsersMicroservice__pb2.RefreshAccessTokenRequest.SerializeToString,
             UsersMicroservice__pb2.RefreshAccessTokenResponse.FromString,
             options, channel_credentials,
@@ -191,7 +191,7 @@ class UsersService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/UsersService/GetInfo',
+        return grpc.experimental.unary_unary(request, target, '/UsersMicroservice.UsersService/GetInfo',
             UsersMicroservice__pb2.GetInfoRequest.SerializeToString,
             UsersMicroservice__pb2.GetInfoResponse.FromString,
             options, channel_credentials,

@@ -2,9 +2,10 @@
 
 import argparse
 import toml
-import os
+import logging
+import sys
 
-os.path.append("../lib/python3")
+sys.path.append("../lib/python3")
 
 from server import run
 
@@ -17,9 +18,9 @@ def main():
     with open(args.config, 'r') as file:
         config = toml.load(file) 
     
-    logging.basicConfig(level=config['LOG']['level'], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    logger = logging.getLoger("USERS_MICROSERVICE")
-
+    logging.basicConfig(level=config['Logging']['level'], format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger("USERS_MICROSERVICE")
+    
     if config and logger:
         run(config, logger)
 

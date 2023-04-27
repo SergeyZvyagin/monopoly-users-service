@@ -13,31 +13,32 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17UsersMicroservice.proto\"\x1f\n\x0b\x41uthRequest\x12\x10\n\x08\x61uthCode\x18\x01 \x01(\t\"6\n\tTokenPair\x12\x13\n\x0b\x61\x63\x63\x65ssToken\x18\x01 \x01(\t\x12\x14\n\x0crefreshToken\x18\x02 \x01(\t\"N\n\x0c\x41uthResponse\x12\x12\n\nstatusCode\x18\x01 \x01(\x05\x12\x1f\n\x06tokens\x18\x02 \x01(\x0b\x32\n.TokenPairH\x00\x88\x01\x01\x42\t\n\x07_tokens\"8\n\x15\x43hangeNicknameRequest\x12\x0e\n\x06userID\x18\x01 \x01(\r\x12\x0f\n\x07newName\x18\x02 \x01(\t\",\n\x16\x43hangeNicknameResponse\x12\x12\n\nstatusCode\x18\x01 \x01(\x05\"1\n\x19RefreshAccessTokenRequest\x12\x14\n\x0crefreshToken\x18\x01 \x01(\t\"\\\n\x1aRefreshAccessTokenResponse\x12\x12\n\nstatusCode\x18\x01 \x01(\x05\x12\x1f\n\x06tokens\x18\x02 \x01(\x0b\x32\n.TokenPairH\x00\x88\x01\x01\x42\t\n\x07_tokens\" \n\x0eGetInfoRequest\x12\x0e\n\x06userID\x18\x01 \x01(\r\"3\n\x0fGetInfoResponse\x12\x0e\n\x06rating\x18\x01 \x01(\r\x12\x10\n\x08nickname\x18\x02 \x01(\t2\xa5\x02\n\x0cUsersService\x12*\n\x0b\x41uthAsGuest\x12\x0c.AuthRequest\x1a\r.AuthResponse\x12)\n\nAuthFromVK\x12\x0c.AuthRequest\x1a\r.AuthResponse\x12\x41\n\x0e\x43hangeNickname\x12\x16.ChangeNicknameRequest\x1a\x17.ChangeNicknameResponse\x12M\n\x12RefreshAccessToken\x12\x1a.RefreshAccessTokenRequest\x1a\x1b.RefreshAccessTokenResponse\x12,\n\x07GetInfo\x12\x0f.GetInfoRequest\x1a\x10.GetInfoResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17UsersMicroservice.proto\x12\x11UsersMicroservice\"\x1f\n\x0b\x41uthRequest\x12\x10\n\x08\x61uthCode\x18\x01 \x01(\t\"6\n\tTokenPair\x12\x13\n\x0b\x61\x63\x63\x65ssToken\x18\x01 \x01(\t\x12\x14\n\x0crefreshToken\x18\x02 \x01(\t\"`\n\x0c\x41uthResponse\x12\x12\n\nstatusCode\x18\x01 \x01(\x05\x12\x31\n\x06tokens\x18\x02 \x01(\x0b\x32\x1c.UsersMicroservice.TokenPairH\x00\x88\x01\x01\x42\t\n\x07_tokens\"8\n\x15\x43hangeNicknameRequest\x12\x0e\n\x06userID\x18\x01 \x01(\r\x12\x0f\n\x07newName\x18\x02 \x01(\t\",\n\x16\x43hangeNicknameResponse\x12\x12\n\nstatusCode\x18\x01 \x01(\x05\"1\n\x19RefreshAccessTokenRequest\x12\x14\n\x0crefreshToken\x18\x01 \x01(\t\"n\n\x1aRefreshAccessTokenResponse\x12\x12\n\nstatusCode\x18\x01 \x01(\x05\x12\x31\n\x06tokens\x18\x02 \x01(\x0b\x32\x1c.UsersMicroservice.TokenPairH\x00\x88\x01\x01\x42\t\n\x07_tokens\" \n\x0eGetInfoRequest\x12\x0e\n\x06userID\x18\x01 \x01(\r\"3\n\x0fGetInfoResponse\x12\x0e\n\x06rating\x18\x01 \x01(\r\x12\x10\n\x08nickname\x18\x02 \x01(\t2\xd9\x03\n\x0cUsersService\x12N\n\x0b\x41uthAsGuest\x12\x1e.UsersMicroservice.AuthRequest\x1a\x1f.UsersMicroservice.AuthResponse\x12M\n\nAuthFromVK\x12\x1e.UsersMicroservice.AuthRequest\x1a\x1f.UsersMicroservice.AuthResponse\x12\x65\n\x0e\x43hangeNickname\x12(.UsersMicroservice.ChangeNicknameRequest\x1a).UsersMicroservice.ChangeNicknameResponse\x12q\n\x12RefreshAccessToken\x12,.UsersMicroservice.RefreshAccessTokenRequest\x1a-.UsersMicroservice.RefreshAccessTokenResponse\x12P\n\x07GetInfo\x12!.UsersMicroservice.GetInfoRequest\x1a\".UsersMicroservice.GetInfoResponseB\x06Z\x04./pbb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'UsersMicroservice_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _AUTHREQUEST._serialized_start=27
-  _AUTHREQUEST._serialized_end=58
-  _TOKENPAIR._serialized_start=60
-  _TOKENPAIR._serialized_end=114
-  _AUTHRESPONSE._serialized_start=116
-  _AUTHRESPONSE._serialized_end=194
-  _CHANGENICKNAMEREQUEST._serialized_start=196
-  _CHANGENICKNAMEREQUEST._serialized_end=252
-  _CHANGENICKNAMERESPONSE._serialized_start=254
-  _CHANGENICKNAMERESPONSE._serialized_end=298
-  _REFRESHACCESSTOKENREQUEST._serialized_start=300
-  _REFRESHACCESSTOKENREQUEST._serialized_end=349
-  _REFRESHACCESSTOKENRESPONSE._serialized_start=351
-  _REFRESHACCESSTOKENRESPONSE._serialized_end=443
-  _GETINFOREQUEST._serialized_start=445
-  _GETINFOREQUEST._serialized_end=477
-  _GETINFORESPONSE._serialized_start=479
-  _GETINFORESPONSE._serialized_end=530
-  _USERSSERVICE._serialized_start=533
-  _USERSSERVICE._serialized_end=826
+  DESCRIPTOR._serialized_options = b'Z\004./pb'
+  _AUTHREQUEST._serialized_start=46
+  _AUTHREQUEST._serialized_end=77
+  _TOKENPAIR._serialized_start=79
+  _TOKENPAIR._serialized_end=133
+  _AUTHRESPONSE._serialized_start=135
+  _AUTHRESPONSE._serialized_end=231
+  _CHANGENICKNAMEREQUEST._serialized_start=233
+  _CHANGENICKNAMEREQUEST._serialized_end=289
+  _CHANGENICKNAMERESPONSE._serialized_start=291
+  _CHANGENICKNAMERESPONSE._serialized_end=335
+  _REFRESHACCESSTOKENREQUEST._serialized_start=337
+  _REFRESHACCESSTOKENREQUEST._serialized_end=386
+  _REFRESHACCESSTOKENRESPONSE._serialized_start=388
+  _REFRESHACCESSTOKENRESPONSE._serialized_end=498
+  _GETINFOREQUEST._serialized_start=500
+  _GETINFOREQUEST._serialized_end=532
+  _GETINFORESPONSE._serialized_start=534
+  _GETINFORESPONSE._serialized_end=585
+  _USERSSERVICE._serialized_start=588
+  _USERSSERVICE._serialized_end=1061
 # @@protoc_insertion_point(module_scope)
