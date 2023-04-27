@@ -19,7 +19,7 @@ class Listener(pb2_grpc.UsersServiceServicer):
     async def AuthFromVK(self, request, context): 
         self.logger.info("AuthFromVK")
         
-        uri_parts = config['AuthFromVK']
+        uri_parts = self.config['AuthFromVK']
         requested_uri = uri_parts['getAccessTokenBaseURL'] + \
             	'?client_id=' + uri_parts['clientID'] + \
 				'&client_secret=' + uri_parts['clientSecret']  + \
@@ -33,8 +33,8 @@ class Listener(pb2_grpc.UsersServiceServicer):
             except Exception as e:
                 return pb2.AuthResponse(statusCode=3)
 
-        logger.info("Recieved from vk %s" % str(vk_resp.text))
-        if vk_resp.status_code == 200:
+        self.logger.info("Recieved from vk %s" % str(vk_resp.text))
+        if vk_resp.status == 200:
             try:
                 vk_resp_dict = json.loads(vk_resp.text(encoding='UTF-8'))
                 
@@ -51,11 +51,11 @@ class Listener(pb2_grpc.UsersServiceServicer):
                                           True
                                           )
 
-                logger.debug("Created JWT pair: %s(access) and %s(refresh)" % (access_token ,refresh_token))
+                self.logger.debug("Created JWT pair: %s(access) and %s(refresh)" % (access_token ,refresh_token))
                 return pb2.AuthResponse(statusCode=0, tokens=pb2.TokenPair(accessToken=access_token, refreshToken=refresh_token))
 
             except Exception as e:
-                logger.error("Creating JWT failed: %s" % str(e))
+                self.logger.error("Creating JWT failed: %s" % str(e))
                 return pb2.AuthResponse(statusCode=2)
         else:
             return pb2.AuthResponse(statusCode=1)
