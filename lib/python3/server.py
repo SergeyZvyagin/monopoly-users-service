@@ -100,11 +100,11 @@ class Listener(pb2_grpc.UsersServiceServicer):
 def createJWT(user_id: int, secret: str, algorithm: str, time_units: int, is_refresh: bool = False):
     delta = datetime.timedelta(minutes=time_units if not is_refresh else 0,
                                days=time_units if is_refresh else 0)
-    now = datetime.datetime.now()
-    expires_at = (now + delta).strftime('%m/%d/%Y %H:%M:%S')
+    now = datetime.datetime.now(tz=datetime.timezone.utc)
+    expires_at = (now + delta)
 
     payload = {'userID': user_id, 
-               'expiresAt': expires_at, 
+               'exp': expires_at, 
                'type': 'refresh' if is_refresh else 'access'
     }
     
