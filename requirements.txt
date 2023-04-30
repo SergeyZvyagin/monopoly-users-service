@@ -4,3 +4,4 @@ grpcio-tools==1.51.1
 requests==2.28.1
 psycopg2-binary==2.9.6
 aiohttp==3.8.4
+vk-api==11.9.9

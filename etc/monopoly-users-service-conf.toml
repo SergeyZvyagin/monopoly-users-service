@@ -13,5 +13,12 @@ refreshTokenDuringLife = 30
 [AuthFromVK]
 getAccessTokenBaseURL = "https://oauth.vk.com/access_token"
 clientID = "51617193"
-clientSecret = "secret"
+clientSecret = "qcMGl6WBRRX22We0doNX"
 redirectURI = "http://127.0.0.1:6543/verifyVK"
+
+[DataBase]
+name = "monopoly"
+user = "mp_client"
+password = "mp_password"
+host = "localhost"
+port = 5432

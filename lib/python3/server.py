@@ -7,7 +7,10 @@ import requests
 import json
 import aiohttp
 import jwt
+import datetime
+import vk_api
 
+import database as db
 import UsersMicroservice_pb2 as pb2
 import UsersMicroservice_pb2_grpc as pb2_grpc
 
@@ -15,6 +18,13 @@ class Listener(pb2_grpc.UsersServiceServicer):
     def __init__(self, config: dict, logger: logging.Logger):
         self.config = config
         self.logger = logger
+        self.db = db.DatabaseManager(logger,
+                              db_name=config["DataBase"]["name"],
+                              db_user=config["DataBase"]["user"],
+                              db_pass=config["DataBase"]["password"],
+                              db_host=config["DataBase"]["host"],
+                              db_port=config["DataBase"]["port"]
+                              )
 
     async def AuthFromVK(self, request, context): 
         self.logger.info("AuthFromVK")
@@ -30,15 +40,32 @@ class Listener(pb2_grpc.UsersServiceServicer):
         async with aiohttp.ClientSession() as session:
             try:
                 vk_resp = await session.get(requested_uri)
+                vk_content = await vk_resp.text(encoding='UTF-8')
             except Exception as e:
-                return pb2.AuthResponse(statusCode=3)
+                return pb2.AuthResponse(status=pb2.ExitStatus.FAILED_DEPENDENCY)
 
-        self.logger.info("Recieved from vk %s" % str(vk_resp.text))
+        self.logger.info("Recieved from VK: %s" % str(vk_resp.text))
+        self.logger.info("Recieved content from VK: %s" % vk_content)
         if vk_resp.status == 200:
             try:
-                vk_resp_dict = json.loads(vk_resp.text(encoding='UTF-8'))
+                vk_content_dict = json.loads(vk_content)
                 
-                user_id = vk_resp_dict['user_id']
+                vk_access_token = vk_content_dict['access_token']
+                vk_user_id = vk_content_dict['user_id']
+
+                user_id = self.db.getUserIDFromVKID(vk_user_id)
+                
+                self.logger.info(str(vk_user_id))
+
+                if not user_id:
+                    self.logger.info("Non-existent user with %d VK ID, registration." % vk_user_id)
+                    vk = vk_api.VkApi(token=vk_access_token)
+                    vk_user = vk.method("users.get", {"user_ids": vk_user_id})
+                    vk_user_name = vk_user[0]['first_name']
+                    
+                    self.logger.debug("Received vk name: %s" % vk_user_name)
+
+                    user_id = self.db.createUserAndReturnID(vk_user_name, vk_user_id)
 
                 access_token = createJWT(user_id, self.config['Token']['secret'],
                                          self.config['Token']['algorithm'],
@@ -50,15 +77,21 @@ class Listener(pb2_grpc.UsersServiceServicer):
                                           self.config['Token']['refreshTokenDuringLife'],
                                           True
                                           )
+                
+                token_pair = pb2.TokenPair(accessToken=access_token, 
+                                           refreshToken=refresh_token)
+                user_info = pb2.User(ID=user_id,
+                                     nickname='Player1',
+                                     isGuest=False,
+                                     rating=100)
 
                 self.logger.debug("Created JWT pair: %s(access) and %s(refresh)" % (access_token ,refresh_token))
-                return pb2.AuthResponse(statusCode=0, tokens=pb2.TokenPair(accessToken=access_token, refreshToken=refresh_token))
-
+                return pb2.AuthResponse(tokens=token_pair, userInfo=user_info)
             except Exception as e:
                 self.logger.error("Creating JWT failed: %s" % str(e))
-                return pb2.AuthResponse(statusCode=2)
+                return pb2.AuthResponse(status=pb2.ExitStatus.CODING_ERROR)
         else:
-            return pb2.AuthResponse(statusCode=1)
+            return pb2.AuthResponse(status=pb2.ExitStatus.FAILED_DEPENDENCY)
 
 
 def createJWT(user_id: int, secret: str, algorithm: str, time_units: int, is_refresh: bool = False):
