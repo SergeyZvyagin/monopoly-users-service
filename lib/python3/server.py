@@ -95,6 +95,27 @@ class Listener(pb2_grpc.UsersServiceServicer):
                 return pb2.AuthResponse(status=pb2.ExitStatus.CODING_ERROR)
         else:
             return pb2.AuthResponse(status=pb2.ExitStatus.FAILED_DEPENDENCY)
+    
+
+    async def RefreshAccessToken(self, request, context):
+        self.logger.info("RefreshAccessToken")
+        user_id = request.requesterID
+        refresh_token = requests.refreshToken
+
+        user_info = self.db.getUserInfoByID(user_id)
+        if not user_info:
+            return pb2.RefreshAccessTokenResponse(status=pb2.ExitStatus.FAILED_DEPENDENCY)
+        
+        access_token = createJWT(user_id, self.config['Token']['secret'],
+                                 self.config['Token']['algorithm'],
+                                 self.config['Token']['accessTokenDuringLife']
+                                 )
+    
+        self.logger.debug("Refreshed access token: %s" % access_token)
+
+        token_pair = pb2.TokenPair(accessToken=access_token, refreshToken=refresh_token)
+
+        return pb2.AuthResponse(tokens=token_pair, userInfo=user_info)
 
 
 def createJWT(user_id: int, secret: str, algorithm: str, time_units: int, is_refresh: bool = False):
