@@ -53,7 +53,7 @@ class Listener(pb2_grpc.UsersServiceServicer):
                 vk_access_token = vk_content_dict['access_token']
                 vk_user_id = vk_content_dict['user_id']
 
-                user_id = self.db.getUserIDFromVKID(vk_user_id)
+                user_id = self.db.getUserIDByVKID(vk_user_id)
                 
                 self.logger.info(str(vk_user_id))
 
@@ -80,10 +80,13 @@ class Listener(pb2_grpc.UsersServiceServicer):
                 
                 token_pair = pb2.TokenPair(accessToken=access_token, 
                                            refreshToken=refresh_token)
+                
+                user_info = self.db.getUserInfoByID(user_id)
+                
                 user_info = pb2.User(ID=user_id,
-                                     nickname='Player1',
-                                     isGuest=False,
-                                     rating=100)
+                                     nickname=user_info[0],
+                                     isGuest=user_info[1],
+                                     rating=user_info[2]) 
 
                 self.logger.debug("Created JWT pair: %s(access) and %s(refresh)" % (access_token ,refresh_token))
                 return pb2.AuthResponse(tokens=token_pair, userInfo=user_info)

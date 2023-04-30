@@ -14,8 +14,12 @@ class DatabaseManager:
         
         self.cursor = self.conn.cursor()
 
+    def getUserInfoByID(self, id: int) -> tuple:
+        self.cursor.execute('SELECT nickname, is_guest, rating FROM users WHERE id=%d' % int(id))
+        return self.cursor.fetchone()
 
-    def getUserIDFromVKID(self, vk_id:int) -> int:
+
+    def getUserIDByVKID(self, vk_id:int) -> int:
         self.cursor.execute('SELECT id FROM users WHERE vk_id=%d;' % int(vk_id))
         row = self.cursor.fetchone()
         return None if not row else row[0]
