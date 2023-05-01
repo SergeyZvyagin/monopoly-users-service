@@ -100,7 +100,6 @@ class Listener(pb2_grpc.UsersServiceServicer):
     async def RefreshAccessToken(self, request, context):
         self.logger.info("RefreshAccessToken")
         user_id = request.requesterID
-        refresh_token = requests.refreshToken
 
         user_info = self.db.getUserInfoByID(user_id)
         if not user_info:
@@ -110,12 +109,9 @@ class Listener(pb2_grpc.UsersServiceServicer):
                                  self.config['Token']['algorithm'],
                                  self.config['Token']['accessTokenDuringLife']
                                  )
-    
         self.logger.debug("Refreshed access token: %s" % access_token)
 
-        token_pair = pb2.TokenPair(accessToken=access_token, refreshToken=refresh_token)
-
-        return pb2.AuthResponse(tokens=token_pair, userInfo=user_info)
+        return pb2.RefreshAccessTokenResponse(accessToken=access_token)
 
 
 def createJWT(user_id: int, secret: str, algorithm: str, time_units: int, is_refresh: bool = False):
