@@ -7,7 +7,7 @@ level = "DEBUG"
 [Token]
 algorithm = "HS256"
 secret = "secret"
-accessTokenDuringLife = 1
+accessTokenDuringLife = 10
 refreshTokenDuringLife = 30
 
 [AuthFromVK]

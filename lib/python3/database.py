@@ -26,6 +26,7 @@ class DatabaseManager:
 
 
     def createUserAndReturnID(self, nickname: str, vk_id:int=None) -> int:
+        vk_id = int(vk_id)
         variables = 'nickname' + (', vk_id, is_guest' if vk_id else '')
         values = f"'{nickname}'" + ('' if not vk_id else f', {vk_id}, false')
 
@@ -34,6 +35,13 @@ class DatabaseManager:
         self.conn.commit()
         
         return user_id
-
+    
+    def changeNickname(self, user_id: int, nickname: str):
+        user_id = int(user_id)
+        nickname = nickname.replace("'", '"')
+        if len(nickname) > 16:
+            nickname = nickname[:16]
+        self.cursor.execute(f"UPDATE users SET nickname='{nickname}' WHERE id={user_id};")
+        self.conn.commit()
 
     

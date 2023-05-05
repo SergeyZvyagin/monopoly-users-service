@@ -26,6 +26,7 @@ class Listener(pb2_grpc.UsersServiceServicer):
                               db_port=config["DataBase"]["port"]
                               )
 
+
     async def AuthFromVK(self, request, context): 
         self.logger.info("AuthFromVK")
         
@@ -46,50 +47,48 @@ class Listener(pb2_grpc.UsersServiceServicer):
 
         self.logger.info("Recieved from VK: %s" % str(vk_resp.text))
         self.logger.info("Recieved content from VK: %s" % vk_content)
-        if vk_resp.status == 200:
-            try:
-                vk_content_dict = json.loads(vk_content)
+        if vk_resp.status == 200: 
+            vk_content_dict = json.loads(vk_content)
                 
-                vk_access_token = vk_content_dict['access_token']
-                vk_user_id = vk_content_dict['user_id']
+            vk_access_token = vk_content_dict['access_token']
+            vk_user_id = vk_content_dict['user_id']
 
-                user_id = self.db.getUserIDByVKID(vk_user_id)
+            user_id = self.db.getUserIDByVKID(vk_user_id)
                 
-                self.logger.info(str(vk_user_id))
+            self.logger.info(str(vk_user_id))
 
-                if not user_id:
-                    self.logger.info("Non-existent user with %d VK ID, registration." % vk_user_id)
-                    vk = vk_api.VkApi(token=vk_access_token)
-                    vk_user = vk.method("users.get", {"user_ids": vk_user_id})
-                    vk_user_name = vk_user[0]['first_name']
+            if not user_id:
+                self.logger.info("Non-existent user with %d VK ID, registration." % vk_user_id)
+                vk = vk_api.VkApi(token=vk_access_token)
+                vk_user = vk.method("users.get", {"user_ids": vk_user_id})
+                vk_user_name = vk_user[0]['first_name']
                     
-                    self.logger.debug("Received vk name: %s" % vk_user_name)
+                self.logger.debug("Received vk name: %s" % vk_user_name)
 
-                    user_id = self.db.createUserAndReturnID(vk_user_name, vk_user_id)
+                user_id = self.db.createUserAndReturnID(vk_user_name, vk_user_id)
 
+            try:
                 access_token = createJWT(user_id, self.config['Token']['secret'],
                                          self.config['Token']['algorithm'],
-                                         self.config['Token']['accessTokenDuringLife']
-                                         )
+                                         self.config['Token']['accessTokenDuringLife'])
                
                 refresh_token = createJWT(user_id, self.config['Token']['secret'],
                                           self.config['Token']['algorithm'],
                                           self.config['Token']['refreshTokenDuringLife'],
-                                          True
-                                          )
+                                          True)
                 
                 token_pair = pb2.TokenPair(accessToken=access_token, 
                                            refreshToken=refresh_token)
                 
                 user_info = self.db.getUserInfoByID(user_id)
                 
-                user_info = pb2.User(ID=user_id,
-                                     nickname=user_info[0],
-                                     isGuest=user_info[1],
-                                     rating=user_info[2]) 
+                user_info_pb = pb2.User(ID=user_id,
+                                        nickname=user_info[0],
+                                        isGuest=user_info[1],
+                                        rating=user_info[2]) 
 
                 self.logger.debug("Created JWT pair: %s(access) and %s(refresh)" % (access_token ,refresh_token))
-                return pb2.AuthResponse(tokens=token_pair, userInfo=user_info)
+                return pb2.AuthResponse(tokens=token_pair, userInfo=user_info_pb)
             except Exception as e:
                 self.logger.error("Creating JWT failed: %s" % str(e))
                 return pb2.AuthResponse(status=pb2.ExitStatus.CODING_ERROR)
@@ -98,12 +97,12 @@ class Listener(pb2_grpc.UsersServiceServicer):
     
 
     async def RefreshAccessToken(self, request, context):
-        self.logger.info("RefreshAccessToken")
         user_id = request.requesterID
+        self.logger.info("RefreshAccessToken request from user #%d" % user_id)
 
         user_info = self.db.getUserInfoByID(user_id)
         if not user_info:
-            return pb2.RefreshAccessTokenResponse(status=pb2.ExitStatus.FAILED_DEPENDENCY)
+            return pb2.RefreshAccessTokenResponse(status=pb2.ExitStatus.RESOURCE_NOT_AVAILABLE)
         
         access_token = createJWT(user_id, self.config['Token']['secret'],
                                  self.config['Token']['algorithm'],
@@ -112,6 +111,35 @@ class Listener(pb2_grpc.UsersServiceServicer):
         self.logger.debug("Refreshed access token: %s" % access_token)
 
         return pb2.RefreshAccessTokenResponse(accessToken=access_token)
+
+    
+    async def GetInfo(self, request, context):
+        user_id = request.userID
+        self.logger.info("GetInfo request from user #%d about user #%d" % (request.requesterID, user_id))
+
+        user_info = self.db.getUserInfoByID(user_id)
+        if not user_info:
+            return pb2.GetInfoResponse(status=pb2.ExitStatus.RESOURCE_NOT_AVAILABLE)
+        
+        user_info_pb = pb2.User(ID=user_id,
+                                nickname=user_info[0],
+                                isGuest=user_info[1],
+                                rating=user_info[2])
+
+        return pb2.GetInfoResponse(userInfo=user_info_pb)
+
+
+    async def ChangeNickname(self, request, context):
+        user_id = request.requesterID
+        new_nickname = request.newNickname
+        self.logger.info("ChangeNickname request from user #%d; New nickname is: %s" % (user_id, new_nickname))
+        
+        try:
+            self.db.changeNickname(user_id, new_nickname)
+            return pb2.ChangeNicknameResponse()
+        except Exception as e:
+            self.logger.info("ChangeNickname request DB error %s" % str(e))
+            return pb2.ChangeNicknameResponse(status=pb2.ExitStatus.FAILED_DEPENDENCY)
 
 
 def createJWT(user_id: int, secret: str, algorithm: str, time_units: int, is_refresh: bool = False):
