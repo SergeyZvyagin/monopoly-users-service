@@ -3,7 +3,6 @@ import sys
 import logging
 import grpc
 import time
-import requests
 import json
 import aiohttp
 import jwt
